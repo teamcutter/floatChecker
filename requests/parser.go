@@ -29,9 +29,9 @@ func SearchCurrentItem(url string) {
 	data := gjson.Get(string(body), "listinginfo")
 	gjson.ForEachLine(data.String(), func(line gjson.Result) bool {
 		fmt.Println(line.String())
-		/* fmt.Println(gjson.Get(string(line.Raw), "listingid")) */
+		// fmt.Println(gjson.Get(string(line.Raw), "listingid"))
 		return true
 	})
-	fmt.Println(data)
+	// fmt.Println(data)
 	defer res.Body.Close()
 }
