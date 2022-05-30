@@ -60,8 +60,8 @@ func SearchCurrentItem(url string) []ItemInfo {
 
 		for i := 0; i < len(listingIdArray); i++ {
 
-			link := strings.Replace(linksArray[i].String(), "listingid", listingIdArray[i].String(), 1)
-			link = strings.Replace(link, "assetid", assetIdArray[i].String(), 1)
+			link := strings.Replace(linksArray[i].String(), "%listingid%", listingIdArray[i].String(), 1)
+			link = strings.Replace(link, "%assetid%", assetIdArray[i].String(), 1)
 			itemsList = append(itemsList, ItemInfo{listingIdArray[i].String(), assetIdArray[i].String(), link})
 		}
 

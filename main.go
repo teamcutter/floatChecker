@@ -12,5 +12,8 @@ import (
 func main() {
 	url := "https://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20AK-47%20%7C%20Uncharted%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1"
 	itemsList := requests.SearchCurrentItem(url)
+	float_url := "https://api.csgofloat.com/?url="
+	floatsList := requests.GetExtraInfo(float_url)
 	fmt.Println("Elements: ", len(itemsList))
+	fmt.Println(floatsList)
 }
