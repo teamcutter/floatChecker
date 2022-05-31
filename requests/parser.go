@@ -14,7 +14,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func SearchCurrentItem(url string) []ItemInfo {
+func SearchCurrentItem(url string) []string {
 
 	startTime := time.Now()
 	
@@ -35,6 +35,8 @@ func SearchCurrentItem(url string) []ItemInfo {
 	var itemsList []ItemInfo
 	var skinUrl string
 	
+	var onlyLinks []string
+
 	for i := 0; i < pageCount; i++ {
 		count := itemsCount - start
 		if count <= 100 {
@@ -63,6 +65,7 @@ func SearchCurrentItem(url string) []ItemInfo {
 			link := strings.Replace(linksArray[i].String(), "%listingid%", listingIdArray[i].String(), 1)
 			link = strings.Replace(link, "%assetid%", assetIdArray[i].String(), 1)
 			itemsList = append(itemsList, ItemInfo{listingIdArray[i].String(), assetIdArray[i].String(), link})
+			onlyLinks = append(onlyLinks, link)
 		}
 
 		start += 100
@@ -70,9 +73,13 @@ func SearchCurrentItem(url string) []ItemInfo {
 	end := time.Now()
 	fmt.Println("End: ", end.Sub(startTime))
 
+	// for _, value := range onlyLinks{
+	// 	fmt.Println(value)
+	// }
 
 	file, _ := json.MarshalIndent(itemsList, "", " ")
 	_ = ioutil.WriteFile("items.json", file, 0644)
 	
-	return itemsList
+	// return itemsList
+	return onlyLinks
 }

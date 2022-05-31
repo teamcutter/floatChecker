@@ -3,27 +3,26 @@ package requests
 import (
 	_ "encoding/json"
 	"fmt"
-	_ "io"
-	"io/ioutil"
 	_ "math"
 	"net/http"
 	_ "strconv"
 	_"strings"
-	_ "time"
 
 	_ "github.com/tidwall/gjson"
 )
 
 
-func GetExtraInfo(url string) bool{
+func GetExtraInfo(APIurl string, urls []string) bool{
 	myClient := &http.Client{}
-	res, _ := myClient.Get(url)
-
-	data, _ := ioutil.ReadFile("items.json")
-
-	fmt.Println(string(data))
+	res, _ := myClient.Get(APIurl)
 
 	defer res.Body.Close()
+	test := "https://api.csgofloat.com/?url="
+	for _, value := range urls{
+		test = APIurl + value
+		fmt.Println(test)
+		test = "https://api.csgofloat.com/?url="
+	}
 
 	return true
 }
