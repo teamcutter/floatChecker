@@ -58,6 +58,12 @@ func SearchCurrentItem(url string) []string {
 		listingIdArray := gjson.Get(newDataString, "#.listingid").Array()
 		assetIdArray := gjson.Get(newDataString, "#.asset.id").Array()
 		rawLinksArray := gjson.Get(newDataString, "#.asset.market_actions.0.link").Array()
+		price := gjson.Get(newDataString, "#.converted_price").Array()
+
+		for _, value := range price{
+			fmt.Println(value.Float()/100)
+		}
+		fmt.Println(price)
 
 		for i := 0; i < len(listingIdArray); i++ {
 
@@ -71,7 +77,6 @@ func SearchCurrentItem(url string) []string {
 	}
 	end := time.Now()
 	fmt.Println("End: ", end.Sub(startTime))
-
 	// for _, value := range onlyLinks{
 	// 	fmt.Println(value)
 	// }
