@@ -34,6 +34,9 @@ func GetExtraInfo(urls []string) []FloatInfo {
 			stickers = append(stickers, sticker.String())
 		}
 
+		if len(stickers) <= 1{
+			stickers = append(stickers, "empty")
+		}
 		floatInfoList = append(floatInfoList, FloatInfo{
 			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
 			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),

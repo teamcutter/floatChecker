@@ -13,7 +13,8 @@ import (
 
 func main() {
 	startTime := time.Now()
-	url := "https://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20AK-47%20%7C%20Uncharted%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1"
+	// тут много https://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20AK-47%20%7C%20Uncharted%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1
+	url := "https://steamcommunity.com/market/listings/730/StatTrak™%20AK-47%20%7C%20Leet%20Museo%20%28Minimal%20Wear%29/render/?query=country=EU&language=english&currency=1"
 	links := requests.SearchCurrentItem(url)
 	fmt.Println("Elements: ", len(links))
 
