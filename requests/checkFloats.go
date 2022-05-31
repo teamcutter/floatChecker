@@ -3,26 +3,47 @@ package requests
 import (
 	_ "encoding/json"
 	"fmt"
-	_ "math"
+	"io"
 	"net/http"
 	_ "strconv"
-	_"strings"
+	_ "strings"
+	"time"
 
-	_ "github.com/tidwall/gjson"
+	"github.com/tidwall/gjson"
 )
 
+const floatUrl string = "https://api.csgofloat.com/?url="
 
-func GetExtraInfo(APIurl string, urls []string) bool{
+func GetExtraInfo(urls []string) []FloatInfo {
+
+	startTime := time.Now()
 	myClient := &http.Client{}
-	res, _ := myClient.Get(APIurl)
 
-	defer res.Body.Close()
-	test := "https://api.csgofloat.com/?url="
-	for _, value := range urls{
-		test = APIurl + value
-		fmt.Println(test)
-		test = "https://api.csgofloat.com/?url="
+	var floatInfoList []FloatInfo
+	// test := "https://api.csgofloat.com/?url="
+	for i := 0; i < len(urls); i++ {
+		res, _ := myClient.Get(floatUrl + urls[i])
+
+		body, _ := io.ReadAll(res.Body)
+		defer res.Body.Close()
+
+		stickersJSON := gjson.Get(string(body), "iteminfo.stickers.#.name").Array()
+		var stickers []string
+
+		for _, sticker := range stickersJSON {
+			stickers = append(stickers, sticker.String())
+		}
+
+		floatInfoList = append(floatInfoList, FloatInfo{
+			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
+			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),
+			Stickers:     stickers,
+		})
+
 	}
 
-	return true
+	end := time.Now()
+	fmt.Println("End: ", end.Sub(startTime))
+
+	return floatInfoList
 }
