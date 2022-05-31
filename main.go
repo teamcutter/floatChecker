@@ -9,19 +9,59 @@ import (
 	_ "math"
 	_ "strings"
 	"time"
+	"sync"
+	"math"
 )
+
+const hundret = "https://steamcommunity.com/market/listings/730/AK-47%20%7C%20Slate%20%28Minimal%20Wear%29/render/?query=country=EU&language=english&currency=1"
 
 func main() {
 	startTime := time.Now()
 	// тут много https://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20AK-47%20%7C%20Uncharted%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1
-	url := "https://steamcommunity.com/market/listings/730/StatTrak™%20AK-47%20%7C%20Leet%20Museo%20%28Minimal%20Wear%29/render/?query=country=EU&language=english&currency=1"
-	links := requests.SearchCurrentItem(url)
+	// url := "https://steamcommunity.com/market/listings/730/%E2%98%85%20Karambit%20%7C%20Case%20Hardened%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1"
+	links := requests.SearchCurrentItem(hundret)
 	fmt.Println("Elements: ", len(links))
 
-	floatInfo := requests.GetExtraInfo(links)
-	fmt.Println(floatInfo)
-	
-	file, _ := json.MarshalIndent(floatInfo, "", " ")
+	var wg sync.WaitGroup
+
+	flCh := make(chan requests.FloatInfo)
+
+	var floatInfoList []requests.FloatInfo
+
+	start := 0
+
+	if len(links) > 100 {
+		// 130 -> 100 + 30 
+		countOfGoRoutines := int(math.Ceil(float64(len(links)) / 100))
+		fmt.Println("Count of goroutines: ", countOfGoRoutines)
+		for i := 0; i < countOfGoRoutines; i++ {
+
+			count := len(links) - start
+			wg.Add(1)
+			if count <= 100 {
+				go requests.GetExtraInfo(links[start:start+count], flCh, &wg)	
+				
+			} else {
+				go requests.GetExtraInfo(links[start:start+100], flCh, &wg)
+			}
+			start += 100
+		} 
+	} else {
+		wg.Add(1)
+		go requests.GetExtraInfo(links, flCh, &wg)
+	}
+
+	go func() {
+		wg.Wait()
+		fmt.Println("Goroutines done")
+		close(flCh)
+	}()
+
+	for v := range flCh {
+		floatInfoList = append(floatInfoList, v)
+	}
+
+	file, _ := json.MarshalIndent(floatInfoList, "", " ")
 	_ = ioutil.WriteFile("floatInfo.json", file, 0644)
 	fmt.Println("Full time:", time.Since(startTime))
 }

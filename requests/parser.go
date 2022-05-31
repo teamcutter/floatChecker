@@ -1,10 +1,10 @@
 package requests
 
 import (
+	_ "encoding/json"
 	"fmt"
 	"io"
-	_"io/ioutil"
-	_"encoding/json"
+	_ "io/ioutil"
 	"math"
 	"net/http"
 	"strconv"
@@ -17,7 +17,7 @@ import (
 func SearchCurrentItem(url string) []string {
 
 	startTime := time.Now()
-	
+
 	url = url + "&count=100"
 	myClient := &http.Client{}
 	res, _ := myClient.Get(url)
@@ -32,7 +32,6 @@ func SearchCurrentItem(url string) []string {
 
 	pageCount := int(math.Ceil(float64(itemsCount) / 100))
 
-	// var itemsList []ItemInfo
 	var skinUrl string
 	var links []string
 
@@ -46,9 +45,9 @@ func SearchCurrentItem(url string) []string {
 
 		myClient := &http.Client{}
 		res, _ := myClient.Get(skinUrl)
-	
+
 		body, _ := io.ReadAll(res.Body)
-	
+
 		defer res.Body.Close()
 
 		data := gjson.Get(string(body), "listinginfo")                       // get raw JSON
@@ -58,18 +57,17 @@ func SearchCurrentItem(url string) []string {
 		listingIdArray := gjson.Get(newDataString, "#.listingid").Array()
 		assetIdArray := gjson.Get(newDataString, "#.asset.id").Array()
 		rawLinksArray := gjson.Get(newDataString, "#.asset.market_actions.0.link").Array()
-		price := gjson.Get(newDataString, "#.converted_price").Array()
+		/* price := gjson.Get(newDataString, "#.converted_price").Array()
 
-		for _, value := range price{
-			fmt.Println(value.Float()/100)
+		for _, value := range price {
+			fmt.Println(value.Float() / 100)
 		}
-		fmt.Println(price)
+		fmt.Println(price) */
 
 		for i := 0; i < len(listingIdArray); i++ {
 
 			link := strings.Replace(rawLinksArray[i].String(), "%listingid%", listingIdArray[i].String(), 1)
 			link = strings.Replace(link, "%assetid%", assetIdArray[i].String(), 1)
-			// itemsList = append(itemsList, ItemInfo{listingIdArray[i].String(), assetIdArray[i].String(), link})
 			links = append(links, link)
 		}
 
@@ -77,13 +75,6 @@ func SearchCurrentItem(url string) []string {
 	}
 	end := time.Now()
 	fmt.Println("End: ", end.Sub(startTime))
-	// for _, value := range onlyLinks{
-	// 	fmt.Println(value)
-	// }
 
-	/* file, _ := json.MarshalIndent(itemsList, "", " ")
-	_ = ioutil.WriteFile("items.json", file, 0644) */
-	
-	// return itemsList
 	return links // возвращаем только линки, больше нам ничего не нужно по идее
 }

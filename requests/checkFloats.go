@@ -7,6 +7,7 @@ import (
 	"net/http"
 	_ "strconv"
 	_ "strings"
+	"sync"
 	"time"
 
 	"github.com/tidwall/gjson"
@@ -14,13 +15,13 @@ import (
 
 const floatUrl string = "https://api.csgofloat.com/?url="
 
-func GetExtraInfo(urls []string) []FloatInfo {
-
+func GetExtraInfo(urls []string, ch chan FloatInfo, wg *sync.WaitGroup) /* []FloatInfo */ {
 	startTime := time.Now()
 	myClient := &http.Client{}
+	fmt.Println("Started goroutine")
+	defer wg.Done()
 
-	var floatInfoList []FloatInfo
-	// test := "https://api.csgofloat.com/?url="
+	// var floatInfoList []FloatInfo
 	for i := 0; i < len(urls); i++ {
 		res, _ := myClient.Get(floatUrl + urls[i])
 
@@ -34,19 +35,35 @@ func GetExtraInfo(urls []string) []FloatInfo {
 			stickers = append(stickers, sticker.String())
 		}
 
-		if len(stickers) <= 1{
-			stickers = append(stickers, "empty")
+		ch <- FloatInfo{
+			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
+			FloatValue:   gjson.Get(string(body), "iteminfo.floats").Float(),
+			Stickers:     stickers,
 		}
-		floatInfoList = append(floatInfoList, FloatInfo{
+		/* if ch != nil {
+			ch <- FloatInfo{
+				FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
+				FloatValue:   gjson.Get(string(body), "iteminfo.floats").Float(),
+				Stickers:     stickers,
+			}
+		} else {
+			floatInfoList = append(floatInfoList, FloatInfo{
+				FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
+				FloatValue:   gjson.Get(string(body), "iteminfo.floats").Float(),
+				Stickers:     stickers,
+			})
+		} */
+
+		/* floatInfoList = append(floatInfoList, FloatInfo{
 			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
 			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),
 			Stickers:     stickers,
-		})
+		}) */
 
 	}
-
+	// ch <- floatInfoList
 	end := time.Now()
 	fmt.Println("End: ", end.Sub(startTime))
 
-	return floatInfoList
+	// return floatInfoList
 }
