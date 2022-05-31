@@ -37,22 +37,9 @@ func GetExtraInfo(urls []string, ch chan FloatInfo, wg *sync.WaitGroup) /* []Flo
 
 		ch <- FloatInfo{
 			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
-			FloatValue:   gjson.Get(string(body), "iteminfo.floats").Float(),
+			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),
 			Stickers:     stickers,
 		}
-		/* if ch != nil {
-			ch <- FloatInfo{
-				FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
-				FloatValue:   gjson.Get(string(body), "iteminfo.floats").Float(),
-				Stickers:     stickers,
-			}
-		} else {
-			floatInfoList = append(floatInfoList, FloatInfo{
-				FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
-				FloatValue:   gjson.Get(string(body), "iteminfo.floats").Float(),
-				Stickers:     stickers,
-			})
-		} */
 
 		/* floatInfoList = append(floatInfoList, FloatInfo{
 			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),

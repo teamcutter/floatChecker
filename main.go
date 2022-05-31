@@ -13,13 +13,13 @@ import (
 	"math"
 )
 
-const hundret = "https://steamcommunity.com/market/listings/730/AK-47%20%7C%20Slate%20%28Minimal%20Wear%29/render/?query=country=EU&language=english&currency=1"
+const thousand = "https://steamcommunity.com/market/listings/730/AK-47%20%7C%20Slate%20%28Minimal%20Wear%29/render/?query=country=EU&language=english&currency=1"
 
 func main() {
 	startTime := time.Now()
 	// тут много https://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20AK-47%20%7C%20Uncharted%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1
-	// url := "https://steamcommunity.com/market/listings/730/%E2%98%85%20Karambit%20%7C%20Case%20Hardened%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1"
-	links := requests.SearchCurrentItem(hundret)
+	url := "https://steamcommunity.com/market/listings/730/AK-47%20%7C%20Elite%20Build%20%28Battle-Scarred%29/render/?query=country=EU&language=english&currency=1"
+	links := requests.SearchCurrentItem(url)
 	fmt.Println("Elements: ", len(links))
 
 	var wg sync.WaitGroup
