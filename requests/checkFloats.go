@@ -7,7 +7,6 @@ import (
 	"net/http"
 	_ "strconv"
 	_ "strings"
-	"sync"
 	"time"
 
 	"github.com/tidwall/gjson"
@@ -15,13 +14,11 @@ import (
 
 const floatUrl string = "https://api.csgofloat.com/?url="
 
-func GetExtraInfo(urls []string, ch chan FloatInfo, wg *sync.WaitGroup) /* []FloatInfo */ {
+func GetExtraInfo(urls []string, ch chan FloatInfo) /* []FloatInfo */ {
 	startTime := time.Now()
 	myClient := &http.Client{}
 	fmt.Println("Started goroutine")
-	defer wg.Done()
 
-	// var floatInfoList []FloatInfo
 	for i := 0; i < len(urls); i++ {
 		res, _ := myClient.Get(floatUrl + urls[i])
 
@@ -48,9 +45,6 @@ func GetExtraInfo(urls []string, ch chan FloatInfo, wg *sync.WaitGroup) /* []Flo
 		}) */
 
 	}
-	// ch <- floatInfoList
 	end := time.Now()
 	fmt.Println("End: ", end.Sub(startTime))
-
-	// return floatInfoList
 }
