@@ -41,6 +41,7 @@ func main() {
 
 					requests.GetExtraInfo(urls, ch)
 					wg.Done()
+					fmt.Println("Done goroutine")
 
 				}(links[start:start+count], flCh)
 				// go requests.GetExtraInfo(links[start:start+count], flCh)
@@ -49,6 +50,7 @@ func main() {
 
 					requests.GetExtraInfo(urls, ch)
 					wg.Done()
+					fmt.Println("Done goroutine")
 
 				}(links[start:start+100], flCh)
 				// go requests.GetExtraInfo(links[start:start+100], flCh)
@@ -73,10 +75,15 @@ func main() {
 		fmt.Println("Channel closed")
 	}()
 
+	
 	for v := range flCh {
 		// fmt.Println(v)
 		floatInfoList = append(floatInfoList, v)
 	}
+	/* close(flCh)
+	wg.Wait() */
+	fmt.Println("Goroutines done")
+
 
 	fmt.Println("Elements count: ", len(floatInfoList))
 
