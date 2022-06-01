@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"floatChecker/requests"
 	"fmt"
-	_ "io"
 	"io/ioutil"
 	"math"
-	_ "math"
-	_ "strings"
 	"sync"
 	"time"
 )
@@ -44,7 +41,6 @@ func main() {
 					fmt.Println("Done goroutine")
 
 				}(links[start:start+count], flCh)
-				// go requests.GetExtraInfo(links[start:start+count], flCh)
 			} else {
 				go func(urls []string, ch chan requests.FloatInfo) {
 
@@ -53,7 +49,6 @@ func main() {
 					fmt.Println("Done goroutine")
 
 				}(links[start:start+100], flCh)
-				// go requests.GetExtraInfo(links[start:start+100], flCh)
 			}
 			start += 100
 		}
@@ -65,7 +60,6 @@ func main() {
 			wg.Done()
 
 		}(links, flCh)
-		// go requests.GetExtraInfo(links, flCh)
 	}
 
 	go func() {
