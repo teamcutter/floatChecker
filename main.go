@@ -74,16 +74,10 @@ func main() {
 		close(flCh)
 		fmt.Println("Channel closed")
 	}()
-
 	
 	for v := range flCh {
-		// fmt.Println(v)
 		floatInfoList = append(floatInfoList, v)
 	}
-	/* close(flCh)
-	wg.Wait() */
-	fmt.Println("Goroutines done")
-
 
 	fmt.Println("Elements count: ", len(floatInfoList))
 
