@@ -1,10 +1,8 @@
 package requests
 
 import (
-	_ "encoding/json"
 	"fmt"
 	"io"
-	_ "io/ioutil"
 	"math"
 	"net/http"
 	"strconv"

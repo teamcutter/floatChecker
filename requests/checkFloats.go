@@ -1,12 +1,9 @@
 package requests
 
 import (
-	_ "encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	_ "strconv"
-	_ "strings"
 	"time"
 
 	"github.com/tidwall/gjson"

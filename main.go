@@ -15,9 +15,11 @@ const thousand = "https://steamcommunity.com/market/listings/730/AK-47%20%7C%20S
 func main() {
 	startTime := time.Now()
 	// тут много https://steamcommunity.com/market/listings/730/StatTrak%E2%84%A2%20AK-47%20%7C%20Uncharted%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1
-	url := "https://steamcommunity.com/market/listings/730/StatTrak™%20Desert%20Eagle%20%7C%20Directive%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1"
-	links := requests.SearchCurrentItem(url)
+	// url := "https://steamcommunity.com/market/listings/730/StatTrak™%20Desert%20Eagle%20%7C%20Directive%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1"
+	links := requests.SearchCurrentItem(thousand)
 	fmt.Println("Links: ", len(links))
+
+	// fmt.Println(links[0])
 
 	var wg sync.WaitGroup
 
