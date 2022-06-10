@@ -1,12 +1,9 @@
 package requests
 
 import (
-	_ "encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	_ "strconv"
-	_ "strings"
 	"time"
 
 	"github.com/tidwall/gjson"
@@ -14,7 +11,7 @@ import (
 
 const floatUrl string = "https://api.csgofloat.com/?url="
 
-func GetExtraInfo(urls []string, ch chan FloatInfo) /* []FloatInfo */ {
+func GetExtraInfo(urls []string, ch chan FloatInfo) {
 	startTime := time.Now()
 	myClient := &http.Client{}
 	fmt.Println("Started goroutine")
@@ -37,12 +34,6 @@ func GetExtraInfo(urls []string, ch chan FloatInfo) /* []FloatInfo */ {
 			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),
 			Stickers:     stickers,
 		}
-
-		/* floatInfoList = append(floatInfoList, FloatInfo{
-			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
-			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),
-			Stickers:     stickers,
-		}) */
 
 	}
 	end := time.Now()
