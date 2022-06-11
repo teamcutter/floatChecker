@@ -7,6 +7,7 @@ import (
 )
 
 func InfoCurrentItem(links []string) []FloatInfo {
+	
 	var wg sync.WaitGroup
 
 	flCh := make(chan FloatInfo)
