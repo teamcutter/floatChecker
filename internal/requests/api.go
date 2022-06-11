@@ -50,6 +50,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 		}(links, flCh)
 	}
 
+	// we need to wait for all goroutines to finish at the same time while they are working 
 	go func() {
 		wg.Wait()
 		fmt.Println("Goroutines done")
