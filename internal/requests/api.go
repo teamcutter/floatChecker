@@ -30,6 +30,7 @@ func SearchCurrentItem(url string) []string {
 	start := 0
 
 	itemsCount, _ := strconv.Atoi(gjson.Get(string(body), "total_count").String())
+	fmt.Println("Items count: ", itemsCount)
 
 	pageCount := int(math.Ceil(float64(itemsCount) / 100))
 
