@@ -14,7 +14,7 @@ func main() {
 	app := echo.New()
 	url := "https://steamcommunity.com/market/listings/730/StatTrak™%20Desert%20Eagle%20%7C%20Directive%20%28Field-Tested%29/render/?query=country=EU&language=english&currency=1"
 	
-	app.GET("/", func(ctx echo.Context) error {
+	app.GET("/info", func(ctx echo.Context) error {
 		links := requests.SearchCurrentItem(url)
 		floatInfoList := requests.InfoCurrentItem(links)
 		return ctx.JSON(http.StatusOK, floatInfoList)
