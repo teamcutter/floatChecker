@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"floatChecker/internal/entity"
 	"io"
 	"log"
 	"math"
@@ -17,11 +18,13 @@ const floatUrl string = "https://api.csgofloat.com/?url="
 func SearchCurrentItem(url string) []string {
 	url = url + "&count=100"
 	myClient := &http.Client{}
-	res, err := myClient.Get(url); if err != nil {
+	res, err := myClient.Get(url)
+	if err != nil {
 		log.Println(err)
 	}
 
-	body, err := io.ReadAll(res.Body); if err != nil {
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
 		log.Println(err)
 	}
 
@@ -29,7 +32,8 @@ func SearchCurrentItem(url string) []string {
 
 	start := 0
 
-	itemsCount, err := strconv.Atoi(gjson.Get(string(body), "total_count").String()); if err != nil {
+	itemsCount, err := strconv.Atoi(gjson.Get(string(body), "total_count").String())
+	if err != nil {
 		log.Println(err)
 	}
 	log.Println("Items count: ", itemsCount)
@@ -48,11 +52,13 @@ func SearchCurrentItem(url string) []string {
 		}
 
 		myClient := &http.Client{}
-		res, err := myClient.Get(skinUrl); if err != nil {
+		res, err := myClient.Get(skinUrl)
+		if err != nil {
 			log.Println(err)
 		}
 
-		body, err := io.ReadAll(res.Body); if err != nil {
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
 			log.Println(err)
 		}
 
@@ -81,18 +87,22 @@ func SearchCurrentItem(url string) []string {
 
 		start += 100
 	}
-	
+
 	return links // возвращаем только линки, больше нам ничего не нужно по идее
 }
 
-func GetExtraInfo(urls []string, ch chan FloatInfo) {
+func GetExtraInfo(urls []string, ch chan entity.FloatInfo) {
 	myClient := &http.Client{}
 	log.Println("Started goroutine")
 
 	for i := 0; i < len(urls); i++ {
-		res, _ := myClient.Get(floatUrl + urls[i])
+		res, err := myClient.Get(floatUrl + urls[i]); if err != nil {
+			log.Println(err)
+		}
 
-		body, _ := io.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body); if err != nil {
+			log.Println(err)
+		}
 		defer res.Body.Close()
 
 		stickersJSON := gjson.Get(string(body), "iteminfo.stickers.#.name").Array()
@@ -102,7 +112,7 @@ func GetExtraInfo(urls []string, ch chan FloatInfo) {
 			stickers = append(stickers, sticker.String())
 		}
 
-		ch <- FloatInfo{
+		ch <- entity.FloatInfo{
 			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
 			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),
 			Stickers:     stickers,
@@ -111,12 +121,12 @@ func GetExtraInfo(urls []string, ch chan FloatInfo) {
 	}
 }
 
-func InfoCurrentItem(links []string) []FloatInfo {
-	
+func InfoCurrentItem(links []string) []entity.FloatInfo {
+
 	var wg sync.WaitGroup
 
-	flCh := make(chan FloatInfo)
-	var floatInfoList []FloatInfo
+	flCh := make(chan entity.FloatInfo)
+	var floatInfoList []entity.FloatInfo
 
 	start := 0
 
@@ -128,7 +138,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 			wg.Add(1)
 			count := len(links) - start
 			if count <= 100 {
-				go func(urls []string, ch chan FloatInfo) {
+				go func(urls []string, ch chan entity.FloatInfo) {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
@@ -136,7 +146,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 
 				}(links[start:start+count], flCh)
 			} else {
-				go func(urls []string, ch chan FloatInfo) {
+				go func(urls []string, ch chan entity.FloatInfo) {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
@@ -148,7 +158,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 		}
 	} else {
 		wg.Add(1)
-		go func(urls []string, ch chan FloatInfo) {
+		go func(urls []string, ch chan entity.FloatInfo) {
 
 			GetExtraInfo(urls, ch)
 			wg.Done()
@@ -156,7 +166,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 		}(links, flCh)
 	}
 
-	// we need to wait for all goroutines to finish at the same time while they are working 
+	// we need to wait for all goroutines to finish at the same time while they are working
 	go func() {
 		wg.Wait()
 		log.Println("Goroutines done")

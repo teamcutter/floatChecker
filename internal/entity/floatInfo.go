@@ -1,4 +1,4 @@
-package requests
+package entity
 
 
 type FloatInfo struct {
