@@ -94,7 +94,6 @@ func SearchCurrentItem(url string) []string {
 func GetExtraInfo(urls []string, ch chan entity.FloatInfo) {
 
 	myClient := &http.Client{}
-	log.Println("Started goroutine")
 
 	for i := 0; i < len(urls); i++ {
 		res, err := myClient.Get(floatUrl + urls[i]); if err != nil {
@@ -132,7 +131,8 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 	start := 0
 
 	countOfGoRoutines := int(math.Ceil(float64(len(links)) / 50))
-	log.Println("Count of goroutines: ", countOfGoRoutines)
+	log.Printf("%d goroutines working \n", countOfGoRoutines)
+	log.Println("Collecting...")
 
 	if len(links) > 50 {
 		for i := 0; i < countOfGoRoutines; i++ {
@@ -143,7 +143,6 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
-					log.Println("Done goroutine")
 
 				}(links[start:start+count], flCh)
 			} else {
@@ -151,7 +150,6 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
-					log.Println("Done goroutine")
 
 				}(links[start:start+50], flCh)
 			}
@@ -170,9 +168,8 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 	// we need to wait for all goroutines to finish at the same time while they are working
 	go func() {
 		wg.Wait()
-		log.Println("Goroutines done")
 		close(flCh)
-		log.Println("Channel closed")
+		log.Println("Data collected!")
 	}()
 
 	for v := range flCh {
