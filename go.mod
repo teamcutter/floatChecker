@@ -1,4 +1,4 @@
-module floatChecker
+module github.com/teamcutter/floatChecker
 
 go 1.18
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"floatChecker/internal/handlers"
-	"floatChecker/internal/middlewares"
+	"github.com/teamcutter/floatChecker/internal/handlers"
+	"github.com/teamcutter/floatChecker/internal/middlewares"
 
 	"github.com/gin-gonic/gin"
 )

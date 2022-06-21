@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"floatChecker/internal/entity"
+	"github.com/teamcutter/floatChecker/internal/entity"
 	"io"
 	"log"
 	"math"

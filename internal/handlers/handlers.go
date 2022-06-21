@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"floatChecker/internal/requests"
+	"github.com/teamcutter/floatChecker/internal/requests"
 	"fmt"
 	"log"
 	"net/http"
