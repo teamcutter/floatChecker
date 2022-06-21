@@ -52,7 +52,6 @@ func SearchCurrentItem(url string) []string {
 			skinUrl = url + "&start=" + strconv.Itoa(start) + "&count=100"
 		}
 
-		myClient := &http.Client{}
 		res, err := myClient.Get(skinUrl)
 		if err != nil {
 			log.Println(err)
