@@ -1,4 +1,4 @@
-package requests
+package search
 
 import (
 	"github.com/teamcutter/floatChecker/internal/entity"
