@@ -37,7 +37,7 @@ func SearchCurrentItem(url string) []string {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("Items count: ", itemsCount)
+	log.Printf("Expected items count: %d \n", itemsCount)
 
 	pageCount := int(math.Ceil(float64(itemsCount) / 100))
 
@@ -62,8 +62,6 @@ func SearchCurrentItem(url string) []string {
 			log.Println(err)
 		}
 
-		defer res.Body.Close()
-
 		data := gjson.Get(string(body), "listinginfo")                       // get raw JSON
 		dataString := []byte(data.String())                                  // present it as byteArray
 		newDataString := "[" + string(dataString[1:len(dataString)-1]) + "]" // replace first { and last } -> []
@@ -87,6 +85,8 @@ func SearchCurrentItem(url string) []string {
 
 		start += 100
 	}
+
+	log.Printf("Real items count: %d \n", len(links))
 
 	return links // возвращаем только линки, больше нам ничего не нужно по идее
 }
