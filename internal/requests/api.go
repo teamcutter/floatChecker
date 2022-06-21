@@ -16,6 +16,7 @@ import (
 const floatUrl string = "https://api.csgofloat.com/?url="
 
 func SearchCurrentItem(url string) []string {
+	
 	url = url + "&count=100"
 	myClient := &http.Client{}
 	res, err := myClient.Get(url)
@@ -92,6 +93,7 @@ func SearchCurrentItem(url string) []string {
 }
 
 func GetExtraInfo(urls []string, ch chan entity.FloatInfo) {
+
 	myClient := &http.Client{}
 	log.Println("Started goroutine")
 
