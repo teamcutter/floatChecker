@@ -1,14 +1,13 @@
 package requests
 
 import (
-	"fmt"
-	"math"
-	"sync"
 	"io"
+	"log"
+	"math"
 	"net/http"
-	"time"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/tidwall/gjson"
 )
@@ -16,21 +15,24 @@ import (
 const floatUrl string = "https://api.csgofloat.com/?url="
 
 func SearchCurrentItem(url string) []string {
-
-	startTime := time.Now()
-
 	url = url + "&count=100"
 	myClient := &http.Client{}
-	res, _ := myClient.Get(url)
+	res, err := myClient.Get(url); if err != nil {
+		log.Println(err)
+	}
 
-	body, _ := io.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body); if err != nil {
+		log.Println(err)
+	}
 
 	defer res.Body.Close()
 
 	start := 0
 
-	itemsCount, _ := strconv.Atoi(gjson.Get(string(body), "total_count").String())
-	fmt.Println("Items count: ", itemsCount)
+	itemsCount, err := strconv.Atoi(gjson.Get(string(body), "total_count").String()); if err != nil {
+		log.Println(err)
+	}
+	log.Println("Items count: ", itemsCount)
 
 	pageCount := int(math.Ceil(float64(itemsCount) / 100))
 
@@ -46,9 +48,13 @@ func SearchCurrentItem(url string) []string {
 		}
 
 		myClient := &http.Client{}
-		res, _ := myClient.Get(skinUrl)
+		res, err := myClient.Get(skinUrl); if err != nil {
+			log.Println(err)
+		}
 
-		body, _ := io.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body); if err != nil {
+			log.Println(err)
+		}
 
 		defer res.Body.Close()
 
@@ -62,9 +68,9 @@ func SearchCurrentItem(url string) []string {
 		/* price := gjson.Get(newDataString, "#.converted_price").Array()
 
 		for _, value := range price {
-			fmt.Println(value.Float() / 100)
+			log.Println(value.Float() / 100)
 		}
-		fmt.Println(price) */
+		log.Println(price) */
 
 		for i := 0; i < len(listingIdArray); i++ {
 
@@ -75,16 +81,13 @@ func SearchCurrentItem(url string) []string {
 
 		start += 100
 	}
-	end := time.Now()
-	fmt.Println("End: ", end.Sub(startTime))
-
+	
 	return links // возвращаем только линки, больше нам ничего не нужно по идее
 }
 
 func GetExtraInfo(urls []string, ch chan FloatInfo) {
-	startTime := time.Now()
 	myClient := &http.Client{}
-	fmt.Println("Started goroutine")
+	log.Println("Started goroutine")
 
 	for i := 0; i < len(urls); i++ {
 		res, _ := myClient.Get(floatUrl + urls[i])
@@ -106,8 +109,6 @@ func GetExtraInfo(urls []string, ch chan FloatInfo) {
 		}
 
 	}
-	end := time.Now()
-	fmt.Println("End: ", end.Sub(startTime))
 }
 
 func InfoCurrentItem(links []string) []FloatInfo {
@@ -120,7 +121,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 	start := 0
 
 	countOfGoRoutines := int(math.Ceil(float64(len(links)) / 100))
-	fmt.Println("Count of goroutines: ", countOfGoRoutines)
+	log.Println("Count of goroutines: ", countOfGoRoutines)
 
 	if len(links) > 100 {
 		for i := 0; i < countOfGoRoutines; i++ {
@@ -131,7 +132,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
-					fmt.Println("Done goroutine")
+					log.Println("Done goroutine")
 
 				}(links[start:start+count], flCh)
 			} else {
@@ -139,7 +140,7 @@ func InfoCurrentItem(links []string) []FloatInfo {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
-					fmt.Println("Done goroutine")
+					log.Println("Done goroutine")
 
 				}(links[start:start+100], flCh)
 			}
@@ -158,9 +159,9 @@ func InfoCurrentItem(links []string) []FloatInfo {
 	// we need to wait for all goroutines to finish at the same time while they are working 
 	go func() {
 		wg.Wait()
-		fmt.Println("Goroutines done")
+		log.Println("Goroutines done")
 		close(flCh)
-		fmt.Println("Channel closed")
+		log.Println("Channel closed")
 	}()
 
 	for v := range flCh {
