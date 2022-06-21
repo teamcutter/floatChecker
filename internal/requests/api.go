@@ -16,7 +16,7 @@ import (
 const floatUrl string = "https://api.csgofloat.com/?url="
 
 func SearchCurrentItem(url string) []string {
-	
+
 	url = url + "&count=100"
 	myClient := &http.Client{}
 	res, err := myClient.Get(url)
@@ -132,14 +132,14 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 
 	start := 0
 
-	countOfGoRoutines := int(math.Ceil(float64(len(links)) / 100))
+	countOfGoRoutines := int(math.Ceil(float64(len(links)) / 50))
 	log.Println("Count of goroutines: ", countOfGoRoutines)
 
-	if len(links) > 100 {
+	if len(links) > 50 {
 		for i := 0; i < countOfGoRoutines; i++ {
 			wg.Add(1)
 			count := len(links) - start
-			if count <= 100 {
+			if count <= 50 {
 				go func(urls []string, ch chan entity.FloatInfo) {
 
 					GetExtraInfo(urls, ch)
@@ -154,9 +154,9 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 					wg.Done()
 					log.Println("Done goroutine")
 
-				}(links[start:start+100], flCh)
+				}(links[start:start+50], flCh)
 			}
-			start += 100
+			start += 50
 		}
 	} else {
 		wg.Add(1)
