@@ -29,30 +29,27 @@ func FloatInfoHandler(c *gin.Context) {
 }
 
 func FloatOverpricedHandler(c *gin.Context) {
-	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "", "", nil)
-	c.IndentedJSON(http.StatusOK, items)
-}
 
-func FloatOverpricedHandlerSaved(c *gin.Context) {
-	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "", c.Param("save"), nil)
-	c.IndentedJSON(http.StatusOK, items)
-}
+	var items []entities.OverpricedItem
+	if c.Param("save") == "true" {
 
+		items = search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), c.Param("save"), "all", nil)
+	} else if c.Param("weaponType") != "all" {
 
-func FloatOverpricedByWeaponHandler(c *gin.Context) {
-	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), 
-	c.Param("weaponType"), "",
-	func(item entities.OverpricedItem, wt string) bool {
+		items = search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "", c.Param("weaponType"), 
+		func(item entities.OverpricedItem, wt string) bool {
 			return strings.Contains(item.FullName, strings.ToUpper(wt))
 		})
-	c.IndentedJSON(http.StatusOK, items)
-}
+	} else if c.Param("save") == "true" && c.Param("weaponType") != "all" {
 
-func FloatOverpricedByWeaponHandlerSaved(c *gin.Context) {
-	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), 
-	c.Param("weaponType"), c.Param("save"),
-	func(item entities.OverpricedItem, wt string) bool {
+		items = search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), c.Param("save"), c.Param("weaponType"), 
+		func(item entities.OverpricedItem, wt string) bool {
 			return strings.Contains(item.FullName, strings.ToUpper(wt))
 		})
+	} else {
+
+		items = search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "false", "all", nil)
+	}
+	
 	c.IndentedJSON(http.StatusOK, items)
 }

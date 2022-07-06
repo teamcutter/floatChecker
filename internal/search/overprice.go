@@ -13,7 +13,7 @@ import (
 
 // url https://inventories.cs.money/5.0/load_bots_inventory/730?buyBonus=35&hasRareFloat=true&isStore=true&limit=60&maxPrice=10000&minPrice=1&offset=5000&sort=botFirst&type=5&type=6&type=3&type=4&type=7&type=8&withStack=true
 
-func OverpricedInfo(url, weaponType, save string, filter func(entities.OverpricedItem, string) bool) []entities.OverpricedItem {
+func OverpricedInfo(url, save, weaponType string, filter func(entities.OverpricedItem, string) bool) []entities.OverpricedItem {
 
 	myClient := &http.Client{}
 	var itemsJSON map[string][]entities.OverpricedItem
@@ -33,6 +33,8 @@ func OverpricedInfo(url, weaponType, save string, filter func(entities.Overprice
 		err = json.Unmarshal(body, &itemsJSON)
 		if err != nil {
 			log.Println(err)
+			defer res.Body.Close()
+			break
 		}
 		if itemsList, ok := itemsJSON["items"]; ok {
 			items = append(items, itemsList...)
@@ -41,20 +43,16 @@ func OverpricedInfo(url, weaponType, save string, filter func(entities.Overprice
 			break
 		}
 
-		if offsetCount == 20 {
-			break
-		}
-
-		offsetCount++
+		offsetCount += 50
 	}
-	if weaponType != "" {
+	if weaponType != "all" {
 		var filteredItems []entities.OverpricedItem
 		for _, item := range items {
 			if filter(item, weaponType) {
 				filteredItems = append(filteredItems, item)
 			}
 		}
-		if save != "" {
+		if save == "true" {
 			filteredItemsJSON, err := json.Marshal(filteredItems); if err != nil {
 				log.Println(err)
 			}
@@ -64,7 +62,7 @@ func OverpricedInfo(url, weaponType, save string, filter func(entities.Overprice
 		}
 		return filteredItems
 	}
-	if save != "" {
+	if save == "true" {
 		itemsJSON, err := json.Marshal(items); if err != nil {
 			log.Println(err)
 		}
