@@ -1,7 +1,7 @@
 package search
 
 import (
-	"github.com/teamcutter/floatChecker/internal/entity"
+	"github.com/teamcutter/floatChecker/internal/entities"
 	"io"
 	"log"
 	"math"
@@ -91,7 +91,7 @@ func SearchCurrentItem(url string) []string {
 	return links // возвращаем только линки, больше нам ничего не нужно по идее
 }
 
-func GetExtraInfo(urls []string, ch chan entity.FloatInfo) {
+func GetExtraInfo(urls []string, ch chan entities.FloatInfo) {
 
 	myClient := &http.Client{}
 
@@ -112,7 +112,7 @@ func GetExtraInfo(urls []string, ch chan entity.FloatInfo) {
 			stickers = append(stickers, sticker.String())
 		}
 
-		ch <- entity.FloatInfo{
+		ch <- entities.FloatInfo{
 			FullItemName: gjson.Get(string(body), "iteminfo.full_item_name").String(),
 			FloatValue:   gjson.Get(string(body), "iteminfo.floatvalue").Float(),
 			Stickers:     stickers,
@@ -121,12 +121,12 @@ func GetExtraInfo(urls []string, ch chan entity.FloatInfo) {
 	}
 }
 
-func InfoCurrentItem(links []string) []entity.FloatInfo {
+func InfoCurrentItem(links []string) []entities.FloatInfo {
 
 	var wg sync.WaitGroup
 
-	flCh := make(chan entity.FloatInfo)
-	var floatInfoList []entity.FloatInfo
+	flCh := make(chan entities.FloatInfo)
+	var floatInfoList []entities.FloatInfo
 
 	start := 0
 
@@ -139,14 +139,14 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 			wg.Add(1)
 			count := len(links) - start
 			if count <= 50 {
-				go func(urls []string, ch chan entity.FloatInfo) {
+				go func(urls []string, ch chan entities.FloatInfo) {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
 
 				}(links[start:start+count], flCh)
 			} else {
-				go func(urls []string, ch chan entity.FloatInfo) {
+				go func(urls []string, ch chan entities.FloatInfo) {
 
 					GetExtraInfo(urls, ch)
 					wg.Done()
@@ -157,7 +157,7 @@ func InfoCurrentItem(links []string) []entity.FloatInfo {
 		}
 	} else {
 		wg.Add(1)
-		go func(urls []string, ch chan entity.FloatInfo) {
+		go func(urls []string, ch chan entities.FloatInfo) {
 
 			GetExtraInfo(urls, ch)
 			wg.Done()
