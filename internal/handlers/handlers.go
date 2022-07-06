@@ -23,3 +23,7 @@ func FloatInfoHandler(c *gin.Context) {
 	})
 	c.IndentedJSON(http.StatusOK, floatInfoList)
 }
+
+func FloatOverpricedHandler(c *gin.Context) {
+
+}
