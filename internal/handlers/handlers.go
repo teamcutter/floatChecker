@@ -29,13 +29,28 @@ func FloatInfoHandler(c *gin.Context) {
 }
 
 func FloatOverpricedHandler(c *gin.Context) {
-	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "", nil)
+	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "", "", nil)
 	c.IndentedJSON(http.StatusOK, items)
 }
 
+func FloatOverpricedHandlerSaved(c *gin.Context) {
+	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "", c.Param("save"), nil)
+	c.IndentedJSON(http.StatusOK, items)
+}
+
+
 func FloatOverpricedByWeaponHandler(c *gin.Context) {
 	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), 
-	c.Param("weaponType"),
+	c.Param("weaponType"), "",
+	func(item entities.OverpricedItem, wt string) bool {
+			return strings.Contains(item.FullName, strings.ToUpper(wt))
+		})
+	c.IndentedJSON(http.StatusOK, items)
+}
+
+func FloatOverpricedByWeaponHandlerSaved(c *gin.Context) {
+	items := search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), 
+	c.Param("weaponType"), c.Param("save"),
 	func(item entities.OverpricedItem, wt string) bool {
 			return strings.Contains(item.FullName, strings.ToUpper(wt))
 		})

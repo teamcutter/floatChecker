@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -12,7 +13,7 @@ import (
 
 // url https://inventories.cs.money/5.0/load_bots_inventory/730?buyBonus=35&hasRareFloat=true&isStore=true&limit=60&maxPrice=10000&minPrice=1&offset=5000&sort=botFirst&type=5&type=6&type=3&type=4&type=7&type=8&withStack=true
 
-func OverpricedInfo(url, weaponType string, filter func(entities.OverpricedItem, string) bool) []entities.OverpricedItem {
+func OverpricedInfo(url, weaponType, save string, filter func(entities.OverpricedItem, string) bool) []entities.OverpricedItem {
 
 	myClient := &http.Client{}
 	var itemsJSON map[string][]entities.OverpricedItem
@@ -40,13 +41,12 @@ func OverpricedInfo(url, weaponType string, filter func(entities.OverpricedItem,
 			break
 		}
 
-		if offsetCount == 10 {
+		if offsetCount == 20 {
 			break
 		}
 
 		offsetCount++
 	}
-
 	if weaponType != "" {
 		var filteredItems []entities.OverpricedItem
 		for _, item := range items {
@@ -54,7 +54,23 @@ func OverpricedInfo(url, weaponType string, filter func(entities.OverpricedItem,
 				filteredItems = append(filteredItems, item)
 			}
 		}
+		if save != "" {
+			filteredItemsJSON, err := json.Marshal(filteredItems); if err != nil {
+				log.Println(err)
+			}
+			err = ioutil.WriteFile(weaponType + ".json", filteredItemsJSON, 0644); if err != nil {
+				log.Println(err)
+			}
+		}
 		return filteredItems
+	}
+	if save != "" {
+		itemsJSON, err := json.Marshal(items); if err != nil {
+			log.Println(err)
+		}
+		err = ioutil.WriteFile("db.json", itemsJSON, 0644); if err != nil {
+			log.Println(err)
+		}
 	}
 	return items
 }
