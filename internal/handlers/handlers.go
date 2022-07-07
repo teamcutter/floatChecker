@@ -36,7 +36,7 @@ func FloatOverpricedHandler(c *gin.Context) {
 		items = search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), c.Param("save"), "all", nil)
 	} else if c.Param("weaponType") != "all" {
 
-		items = search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "", c.Param("weaponType"), 
+		items = search.OverpricedInfo(baseURLOverpriced + c.Param("queryURL"), "false", c.Param("weaponType"), 
 		func(item entities.OverpricedItem, wt string) bool {
 			return strings.Contains(item.FullName, strings.ToUpper(wt))
 		})

@@ -11,7 +11,7 @@ import (
 	"github.com/teamcutter/floatChecker/internal/entities"
 )
 
-// url https://inventories.cs.money/5.0/load_bots_inventory/730?buyBonus=35&hasRareFloat=true&isStore=true&limit=60&maxPrice=10000&minPrice=1&offset=5000&sort=botFirst&type=5&type=6&type=3&type=4&type=7&type=8&withStack=true
+// url https://inventories.cs.money/5.0/load_bots_inventory/730?buyBonus=35&hasRareFloat=true&isStore=true&limit=60&maxPrice=10000&minPrice=1&sort=botFirst&type=5&type=6&type=3&type=4&type=7&type=8&withStack=true
 
 func OverpricedInfo(url, save, weaponType string, filter func(entities.OverpricedItem, string) bool) []entities.OverpricedItem {
 
