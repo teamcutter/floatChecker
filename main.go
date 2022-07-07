@@ -17,7 +17,7 @@ func main() {
 	server.Use(middlewares.Logger())
 	
 	server.GET("/api/v1/floats/info/:queryURL", handlers.FloatInfoHandler)
-	server.GET("/api/v1/overpriced/:queryURL/:save/:weaponType", handlers.FloatOverpricedHandler)
+	server.GET("/api/v1/overpriced/:queryURL/save=:save/weaponType=:weaponType", handlers.FloatOverpricedHandler)
 
 
 	server.Run(":8080")
